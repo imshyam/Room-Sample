@@ -1,7 +1,16 @@
 package com.shyam.roomsample;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
+@Entity
 class CustomData {
-    private String id;
+    @PrimaryKey
+    @NonNull private String id;
+
+    @ColumnInfo(name = "text")
     private String text;
 
     CustomData(String id, String text) {

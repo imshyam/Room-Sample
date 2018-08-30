@@ -1,5 +1,6 @@
 package com.shyam.roomsample;
 
+import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int textId = 0;
     EditText editText;
     CustomViewAdapter customViewAdapter;
+    CustomDataDao dataDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +32,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         save.setOnClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        List<CustomData> customDataList = new ArrayList<>();
-        customViewAdapter = new CustomViewAdapter(customDataList);
+        AppDatabase database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database")
+                .allowMainThreadQueries()
+                .build();
+
+        dataDao = database.customDataDao();
+
+        List<CustomData> dataList = dataDao.getAll();
+
+//        List<CustomData> customDataList = new ArrayList<>();
+        customViewAdapter = new CustomViewAdapter(dataList);
         recyclerView.setAdapter(customViewAdapter);
 
     }
@@ -44,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 String id = String.valueOf(textId);
                 CustomData data = new CustomData(id, text);
                 customViewAdapter.addItem(data);
+                dataDao.insertData(data);
                 textId++;
         }
     }
