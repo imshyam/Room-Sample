@@ -15,4 +15,7 @@ public interface CustomDataDao {
     @Insert
     void insertData(CustomData data);
 
+    @Query("SELECT MAX(id) from customdata")
+    int getMaxId();
+
 }

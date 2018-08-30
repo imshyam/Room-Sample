@@ -8,17 +8,17 @@ import android.support.annotation.NonNull;
 @Entity
 class CustomData {
     @PrimaryKey
-    @NonNull private String id;
+    @NonNull private int id;
 
     @ColumnInfo(name = "text")
     private String text;
 
-    CustomData(String id, String text) {
+    CustomData(int id, String text) {
         this.id = id;
         this.text = text;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

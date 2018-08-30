@@ -17,7 +17,7 @@ public class CustomViewHolder extends RecyclerView.ViewHolder {
     public void bindData(CustomData data) {
         TextView id = item.findViewById(R.id.id);
         TextView text = item.findViewById(R.id.text);
-        id.setText(data.getId());
+        id.setText(String.valueOf(data.getId()));
         text.setText(data.getText());
     }
 }
