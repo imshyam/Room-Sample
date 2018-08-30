@@ -15,7 +15,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    int textId = 0;
     EditText editText;
     CustomViewAdapter customViewAdapter;
     CustomDataDao dataDao;
@@ -51,11 +50,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.button:
                 String text = editText.getText().toString();
-                String id = String.valueOf(textId);
+                int id = dataDao.getMaxId() == 0 ? 1 : dataDao.getMaxId() + 1;
                 CustomData data = new CustomData(id, text);
                 customViewAdapter.addItem(data);
                 dataDao.insertData(data);
-                textId++;
         }
     }
 }
