@@ -1,6 +1,7 @@
 package com.shyam.roomsample;
 
 import android.arch.persistence.room.Room;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +13,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText editText;
     CustomViewAdapter customViewAdapter;
-    CustomDataDao dataDao;
+    AppDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,15 +33,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         save.setOnClickListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-        AppDatabase database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database")
-                .allowMainThreadQueries()
-                .build();
+        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database").build();
 
-        dataDao = database.customDataDao();
+        DataBaseAsyncTask asyncTask = new DataBaseAsyncTask();
+        List<CustomData> dataList = new ArrayList<>();
+        try {
+            dataList = asyncTask.execute(database).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        List<CustomData> dataList = dataDao.getAll();
-
-//        List<CustomData> customDataList = new ArrayList<>();
         customViewAdapter = new CustomViewAdapter(dataList);
         recyclerView.setAdapter(customViewAdapter);
 
@@ -50,10 +55,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.button:
                 String text = editText.getText().toString();
-                int id = dataDao.getMaxId() == 0 ? 1 : dataDao.getMaxId() + 1;
-                CustomData data = new CustomData(id, text);
-                customViewAdapter.addItem(data);
-                dataDao.insertData(data);
+                SaveAsyncTask saveAsyncTask = new SaveAsyncTask(database);
+                int id = 1;
+                try {
+                    id = saveAsyncTask.execute(text).get();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                customViewAdapter.addItem(new CustomData(id, text));
+
         }
     }
 }
