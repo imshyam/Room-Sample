@@ -36,6 +36,6 @@ public class CustomViewAdapter extends RecyclerView.Adapter<CustomViewHolder> {
 
     public void addItem(CustomData data) {
         customDataList.add(data);
-        notifyDataSetChanged();
+        notifyItemInserted(customDataList.size());
     }
 }
