@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText editText;
     RecyclerView recyclerView;
     CustomViewAdapter customViewAdapter;
-    AppDatabase database;
+    CustomDataDao dataDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +34,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database").build();
+        AppDatabase database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database")
+                .allowMainThreadQueries()
+                .build();
+        dataDao = database.customDataDao();
 
-        GetAllAsyncTask asyncTask = new GetAllAsyncTask();
-        List<CustomData> dataList = new ArrayList<>();
-        try {
-            dataList = asyncTask.execute(database).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        List<CustomData> dataList = dataDao.getAll();
 
         customViewAdapter = new CustomViewAdapter(dataList);
         recyclerView.setAdapter(customViewAdapter);
@@ -56,16 +52,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.button:
                 String text = editText.getText().toString();
-                SaveAsyncTask saveAsyncTask = new SaveAsyncTask(database);
-                int id = 1;
-                try {
-                    id = saveAsyncTask.execute(text).get();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                customViewAdapter.addItem(new CustomData(id, text));
+                int id = dataDao.getMaxId() == 0 ? 1 : dataDao.getMaxId() + 1;
+                CustomData data = new CustomData(id, text);
+                dataDao.insertData(data);
+                customViewAdapter.addItem(data);
                 recyclerView.scrollToPosition(customViewAdapter.getItemCount() - 1);
         }
     }
