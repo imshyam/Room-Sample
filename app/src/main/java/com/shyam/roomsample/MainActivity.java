@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     EditText editText;
+    RecyclerView recyclerView;
     CustomViewAdapter customViewAdapter;
     AppDatabase database;
 
@@ -27,11 +28,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         Button save = findViewById(R.id.button);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         editText = findViewById(R.id.editText);
 
         save.setOnClickListener(this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setStackFromEnd(true);
+        recyclerView.setLayoutManager(layoutManager);
 
         database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database").build();
 
@@ -65,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     e.printStackTrace();
                 }
                 customViewAdapter.addItem(new CustomData(id, text));
-
+                recyclerView.scrollToPosition(customViewAdapter.getItemCount() - 1);
         }
     }
 }
