@@ -5,7 +5,7 @@ import android.util.Log;
 
 import java.util.List;
 
-public class DataBaseAsyncTask extends AsyncTask<AppDatabase, Void, List<CustomData>> {
+public class GetAllAsyncTask extends AsyncTask<AppDatabase, Void, List<CustomData>> {
     @Override
     protected List<CustomData> doInBackground(AppDatabase... appDatabases) {
         AppDatabase appDatabase = appDatabases[0];
