@@ -1,6 +1,10 @@
 package com.shyam.roomsample;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText editText;
     RecyclerView recyclerView;
     CustomViewAdapter customViewAdapter;
-    CustomDataDao dataDao;
+    DataViewModel dataViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +38,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         layoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(layoutManager);
 
-        AppDatabase database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "my-database")
-                .allowMainThreadQueries()
-                .build();
-        dataDao = database.customDataDao();
+        dataViewModel = ViewModelProviders.of(this).get(DataViewModel.class);
+        observeDataViewModel(dataViewModel);
 
+    }
 
-        List<CustomData> dataList = dataDao.getAll();
-
-        customViewAdapter = new CustomViewAdapter(dataList);
-        recyclerView.setAdapter(customViewAdapter);
-
+    private void observeDataViewModel(DataViewModel dataViewModel) {
+        dataViewModel.getCustomDataObservable().observe(this, new Observer<List<CustomData>>() {
+            @Override
+            public void onChanged(@Nullable List<CustomData> data) {
+                customViewAdapter = new CustomViewAdapter(data);
+                recyclerView.setAdapter(customViewAdapter);
+            }
+        });
     }
 
     @Override
@@ -53,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button:
                 String text = editText.getText().toString();
                 CustomData data = new CustomData(text);
-                dataDao.insertData(data);
+                dataViewModel.addData(data);
                 customViewAdapter.addItem(data);
                 recyclerView.scrollToPosition(customViewAdapter.getItemCount() - 1);
         }
