@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (view.getId()) {
             case R.id.button:
                 String text = editText.getText().toString();
-                int id = dataDao.getMaxId() == 0 ? 1 : dataDao.getMaxId() + 1;
-                CustomData data = new CustomData(id, text);
+                CustomData data = new CustomData(text);
                 dataDao.insertData(data);
                 customViewAdapter.addItem(data);
                 recyclerView.scrollToPosition(customViewAdapter.getItemCount() - 1);

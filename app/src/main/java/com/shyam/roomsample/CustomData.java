@@ -3,23 +3,18 @@ package com.shyam.roomsample;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
-@Entity
+@Entity(tableName = "custom_data_table")
 class CustomData {
-    @PrimaryKey
-    @NonNull private int id;
+
+    @PrimaryKey(autoGenerate = true)
+    int id;
 
     @ColumnInfo(name = "text")
     private String text;
 
-    CustomData(int id, String text) {
-        this.id = id;
+    CustomData(String text) {
         this.text = text;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getText() {

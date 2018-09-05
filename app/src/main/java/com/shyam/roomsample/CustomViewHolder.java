@@ -14,10 +14,10 @@ public class CustomViewHolder extends RecyclerView.ViewHolder {
         item = itemView;
     }
 
-    public void bindData(CustomData data) {
+    public void bindData(int i, CustomData data) {
         TextView id = item.findViewById(R.id.id);
         TextView text = item.findViewById(R.id.text);
-        id.setText(String.valueOf(data.getId()));
+        id.setText(String.valueOf(i));
         text.setText(data.getText());
     }
 }

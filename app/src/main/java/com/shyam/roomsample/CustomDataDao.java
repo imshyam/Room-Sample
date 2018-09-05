@@ -9,13 +9,10 @@ import java.util.List;
 @Dao
 public interface CustomDataDao {
 
-    @Query("SELECT * FROM customdata")
+    @Query("SELECT * FROM custom_data_table")
     List<CustomData> getAll();
 
     @Insert
     void insertData(CustomData data);
-
-    @Query("SELECT MAX(id) from customdata")
-    int getMaxId();
 
 }

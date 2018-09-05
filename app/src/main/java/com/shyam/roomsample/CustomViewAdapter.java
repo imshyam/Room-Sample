@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 public class CustomViewAdapter extends RecyclerView.Adapter<CustomViewHolder> {
-    List<CustomData> customDataList;
+    private List<CustomData> customDataList;
 
     CustomViewAdapter(List<CustomData> list) {
         customDataList = list;
@@ -26,7 +26,7 @@ public class CustomViewAdapter extends RecyclerView.Adapter<CustomViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder customViewHolder, int i) {
         CustomData data = customDataList.get(i);
-        customViewHolder.bindData(data);
+        customViewHolder.bindData(i, data);
     }
 
     @Override
